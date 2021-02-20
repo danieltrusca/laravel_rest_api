@@ -5,6 +5,13 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
+use Exception;
+use Symfony\Component\HttpFoundation\Response;
+
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
+
 class Handler extends ExceptionHandler
 {
     /**
@@ -36,5 +43,22 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+
+
+
+        $this->renderable(function (NotFoundHttpException $e, $request) {
+            if($request->expectsJson()){
+                return response()->json([
+                    'errors'=>'Incorect Route'
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+        });
+
+
+
     }
+
+
+
 }
